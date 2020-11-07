@@ -71,8 +71,13 @@ int main(int argc, char *argv[])
     }
 
     std::vector<ParticleInfo> PI;
-
-    /*座標の読み込みを行う．*/
+    ParticleInfo temp_info;
+    /*
+    
+    
+    
+    
+    座標の読み込みを行う．*/
     std::ifstream ifs0(argv[1]);
     if (!ifs0)
     {
@@ -84,24 +89,43 @@ int main(int argc, char *argv[])
     {
         std::string delete_str;
         std::getline(ifs0, delete_str);
-        std::cout << delete_str << std::endl;
     }
     //ファイルの読み込み
-    ParticleInfo temp_info;
     while (ifs0 >> temp_info.id >> temp_info.type >> temp_info.posx >> temp_info.posy >> temp_info.posz)
     {
         PI.push_back(temp_info);
     }
-
-
+    ifs0.close();
     /*
-    std::ifstream ifs1("../input/" + argv[2]);
+    
+    
+    
+    
+    速度の読み込みを行う．*/
+    std::ifstream ifs1(argv[2]);
     if (!ifs1)
     {
         std::cerr << "error1" << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
+    //ファイルの読み込み
+    while (ifs1 >> temp_info.id >>  temp_info.velx >> temp_info.vely >> temp_info.velz)
+    {
+        PI.at(temp_info.id-1).velx=temp_info.velx;
+        PI.at(temp_info.id-1).vely=temp_info.vely;
+        PI.at(temp_info.id-1).velz=temp_info.velz;
+    }
+    ifs1.close();
+    for(int i = 0;i<10;i++){
+        std::cout<<PI.at(i).velx<<std::endl;
+    }
+    /*
+    
+    
+    
+    
+    速度の読み込みを行う．*/
+    /*
     std::ifstream ifs2("../input/" + argv[3]);
     if (!ifs2)
     {

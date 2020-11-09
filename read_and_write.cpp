@@ -212,6 +212,14 @@ int main(int argc, char *argv[])
         printf("ERROR_initial_vel_lipid.cdv\n");
         return -1;
     }
+        for (int i = 0; i < pinfo.size(); i++)
+    {
+        fprintf(fpo1, "%d   %lf   %lf   %lf \n",
+                pinfo.at(i).id + 1,
+                pinfo.at(i).velx,
+                pinfo.at(i).vely,
+                pinfo.at(i).velz);
+    }
     /*
 
 

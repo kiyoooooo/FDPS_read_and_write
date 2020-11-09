@@ -92,9 +92,10 @@ int main(int argc, char *argv[])
         std::string delete_str;
         std::getline(ifs0, delete_str);
     }
-    //ファイルの読み込み
+    //ファイルの読み込み　粒子番号は0から開始する．
     while (ifs0 >> temp_info.id >> temp_info.type >> temp_info.posx >> temp_info.posy >> temp_info.posz)
     {
+        temp_info.id--;
         PI.push_back(temp_info);
     }
     ifs0.close();
@@ -124,7 +125,7 @@ int main(int argc, char *argv[])
     
     
     
-    ボンド情報の読み込みを行う．*/
+    ボンド情報の読み込みを行う．粒子番号や，ボンド相手の粒子番号とボンド種が−1されていることに注意する．*/
     std::ifstream ifs2(argv[3]);
     if (!ifs2)
     {
@@ -136,6 +137,7 @@ int main(int argc, char *argv[])
     {
         int i = temp_info.bond_pair[0] - 1;
         int j = temp_info.bond_pair[1] - 1;
+        temp_info.bond_type[0]--;
         PI.at(i).bond_pair[PI.at(i).nbond] = j;
         PI.at(i).bond_type[PI.at(i).nbond] = temp_info.bond_type[0];
         PI.at(i).nbond++;
@@ -144,42 +146,65 @@ int main(int argc, char *argv[])
         PI.at(j).bond_type[PI.at(j).nbond] = temp_info.bond_type[0];
         PI.at(j).nbond++;
     }
-    ifs1.close();
+    ifs2.close();
+    /*//bond情報をファイルに書き出す際に便利な書き方．
     for (int i = 0; i < 10; i++)
     {
-        std::cout << PI.at(i).bond_pair[0] + 1 << " " << PI.at(i).bond_pair[1] + 1 << std::endl;
-    }
-
+        //"&&"条件で，PI.at(i).nbond == 1のときに重複して出力してしまうのを防ぐ．
+        if (PI.at(i).nbond == 1 && PI.at(i).id < PI.at(i).bond_pair[0])
+        {
+            std::cout << PI.at(i).id + 1 << " " << PI.at(i).bond_pair[0] + 1 << " " << PI.at(i).bond_type[0] + 1 << std::endl;
+        }
+        else if (PI.at(i).nbond == 2)
+        {
+            std::cout << PI.at(i).id + 1 << " " << PI.at(i).bond_pair[1] + 1 << " " << PI.at(i).bond_type[0] + 1 << std::endl;
+        }
+    }*/
     /*
     
     
     
     
-    アングル情報の読み込みを行う．*/
-
-    std::ifstream ifs3("../input/" + argv[4]);
+    アングル情報の読み込みを行う．粒子番号や，アングル相手の粒子番号とアングル種が−1されていることに注意する．まだ途中*/
+    std::ifstream ifs3(argv[4]);
     if (!ifs3)
     {
         std::cerr << "error3" << std::endl;
         std::exit(EXIT_FAILURE);
     }
     //ファイルの読み込み
-    while (ifs2 >> temp_info.bond_pair[0] >> temp_info.bond_pair[1] >> temp_info.bond_type[0])
+    while (ifs3 >> temp_info.angle_pair[0][0] >> temp_info.angle_pair[0][1] >> temp_info.angle_pair[0][2] >> temp_info.angle_type[0])
     {
-        int i = temp_info.bond_pair[0] - 1;
-        int j = temp_info.bond_pair[1] - 1;
-        PI.at(i).bond_pair[PI.at(i).nbond] = j;
-        PI.at(i).bond_type[PI.at(i).nbond] = temp_info.bond_type[0];
-        PI.at(i).nbond++;
+        int i = temp_info.angle_pair[0][0] - 1;
+        int j = temp_info.angle_pair[0][1] - 1;
+        int k = temp_info.angle_pair[0][2] - 1;
+        temp_info.angle_type[0]--;
+        PI.at(i).angle_pair[PI.at(i).nangle][0] = i;
+        PI.at(i).angle_pair[PI.at(i).nangle][1] = j;
+        PI.at(i).angle_pair[PI.at(i).nangle][2] = k;
+        PI.at(i).angle_type[PI.at(i).nangle] = temp_info.angle_type[0];
+        PI.at(i).nangle++;
 
-        PI.at(j).bond_pair[PI.at(j).nbond] = i;
-        PI.at(j).bond_type[PI.at(j).nbond] = temp_info.bond_type[0];
-        PI.at(j).nbond++;
+        PI.at(j).angle_pair[PI.at(j).nangle][0] = i;
+        PI.at(j).angle_pair[PI.at(j).nangle][1] = j;
+        PI.at(j).angle_pair[PI.at(j).nangle][2] = k;
+        PI.at(j).angle_type[PI.at(j).nangle] = temp_info.angle_type[0];
+        PI.at(j).nangle++;
+
+        PI.at(k).angle_pair[PI.at(k).nangle][0] = i;
+        PI.at(k).angle_pair[PI.at(k).nangle][1] = j;
+        PI.at(k).angle_pair[PI.at(k).nangle][2] = k;
+        PI.at(k).angle_type[PI.at(k).nangle] = temp_info.angle_type[0];
+        PI.at(k).nangle++;
     }
-    ifs1.close();
+    ifs3.close();
+    /*//アングル情報をファイルに書き出す際に便利な書き方．
     for (int i = 0; i < 10; i++)
     {
-        std::cout << PI.at(i).bond_pair[0] + 1 << " " << PI.at(i).bond_pair[1] + 1 << std::endl;
-    }
+        if (PI.at(i).nangle == 1)
+        {
+            std::cout << PI.at(i).angle_pair[0][0] + 1 << " " << PI.at(i).angle_pair[0][1] + 1 << " " << PI.at(i).angle_pair[0][2] + 1 << " " << PI.at(i).angle_type[0] + 1 << std::endl;
+        }
+    }*/
     return 0;
 }

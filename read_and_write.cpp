@@ -197,6 +197,7 @@ int main(int argc, char *argv[])
                 pinfo.at(i).posy,
                 pinfo.at(i).posz);
     }
+    fclose(fpo0);
     /*
 
 
@@ -212,7 +213,7 @@ int main(int argc, char *argv[])
         printf("ERROR_initial_vel_lipid.cdv\n");
         return -1;
     }
-        for (int i = 0; i < pinfo.size(); i++)
+    for (int i = 0; i < pinfo.size(); i++)
     {
         fprintf(fpo1, "%d   %lf   %lf   %lf \n",
                 pinfo.at(i).id + 1,
@@ -220,6 +221,7 @@ int main(int argc, char *argv[])
                 pinfo.at(i).vely,
                 pinfo.at(i).velz);
     }
+    fclose(fpo1);
     /*
 
 
@@ -241,6 +243,7 @@ int main(int argc, char *argv[])
             fpo2 << pinfo.at(i).id + 1 << "   " << pinfo.at(i).bond_pair[1] + 1 << "   " << pinfo.at(i).bond_type[0] + 1 << std::endl;
         }
     }
+    fpo2.close();
     /*
 
 
@@ -248,13 +251,16 @@ int main(int argc, char *argv[])
 
 
     */
+    //bond_file ofstream記法で出力する．
     //angle_file
-    FILE *fpo3;
-    fpo3 = fopen("../output/angle_info.cdv", "w");
-    if (fpo3 == NULL)
+    std::ofstream fpo3("../output/angle_info.cdv", std::ios::out);
+    for (int i = 0; i < pinfo.size(); i++)
     {
-        printf("ERROR_angle_info.cdv\n");
-        return -1;
+        if (pinfo.at(i).nangle == 1)
+        {
+            fpo3 << pinfo.at(i).angle_pair[0][0] + 1 << "   " << pinfo.at(i).angle_pair[0][1] + 1 << "   " << pinfo.at(i).angle_pair[0][2] + 1 << "   " << pinfo.at(i).angle_type[0] + 1 << std::endl;
+        }
     }
+    fpo3.close();
     return 0;
 }

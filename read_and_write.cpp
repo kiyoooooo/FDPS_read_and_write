@@ -227,13 +227,19 @@ int main(int argc, char *argv[])
 
 
     */
-    //bond_file
-    FILE *fpo2;
-    fpo2 = fopen("../output/bond_info.cdv", "w");
-    if (fpo2 == NULL)
+    //bond_fileここからはofstream記法で出力する．
+    std::ofstream fpo2("../output/bond_info.cdv", std::ios::out);
+    for (int i = 0; i < pinfo.size(); i++)
     {
-        printf("ERROR_bond_info.cdv\n");
-        return -1;
+        //"&&"条件で，pinfo.at(i).nbond == 1のときに重複して出力してしまうのを防ぐ．
+        if (pinfo.at(i).nbond == 1 && pinfo.at(i).id < pinfo.at(i).bond_pair[0])
+        {
+            fpo2 << pinfo.at(i).id + 1 << "   " << pinfo.at(i).bond_pair[0] + 1 << "   " << pinfo.at(i).bond_type[0] + 1 << std::endl;
+        }
+        else if (pinfo.at(i).nbond == 2)
+        {
+            fpo2 << pinfo.at(i).id + 1 << "   " << pinfo.at(i).bond_pair[1] + 1 << "   " << pinfo.at(i).bond_type[0] + 1 << std::endl;
+        }
     }
     /*
 

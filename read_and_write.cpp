@@ -30,6 +30,14 @@ public:
     uint32_t angle_pair[2][3];
     uint32_t angle_type[2];
     uint32_t nangle = 0;
+
+    //sortを利用するために定義
+    bool operator<(const ParticleInfo &another) const
+    {
+        //メンバ変数であるnum1で比較した結果を
+        //この構造体の比較とする
+        return id < another.id;
+    }
 };
 
 int main(int argc, char *argv[])
@@ -62,6 +70,7 @@ int main(int argc, char *argv[])
         pinfo.push_back(temp_info);
     }
     ifs0.close();
+    std::sort(pinfo.begin(), pinfo.end()); //classでオペレータを定義して利用している．
     /*
     
     
